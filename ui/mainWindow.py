@@ -1,12 +1,12 @@
 import requests
-import sys
-from PyQt5.QtWidgets import QWidget,QPushButton,QGridLayout,QApplication,QLabel,QStatusBar,QAction,qApp,QMainWindow,QLineEdit,QComboBox
+
+from PyQt5.QtWidgets import QWidget, QPushButton, QGridLayout, QLabel, QStatusBar, QAction, qApp, QMainWindow, QLineEdit,QComboBox
 from PyQt5.QtGui import QIcon,QPixmap
-from pokemonDisplay import AffichagePokemon
-from navLayout import NavLayout
-from teamLayout import TeamLayout
-from pokemon import *
-from teamLayout import *
+
+from ui.pokemonDisplay import AffichagePokemon
+from ui.navLayout import NavLayout
+from ui.teamLayout import TeamLayout
+from api.pokemon import find_pokemon_by_id
 
 
 """
@@ -70,16 +70,3 @@ class MainWindow(QMainWindow):
         self.setGeometry(300,300,800,500)
         self.setWindowTitle('Pokedex')
         self.show()
-
-"""
-    Fonction main
-"""
-def main():
-    pokemon_first_gen = [0, 151]
-    listPokemon = find_pokemon_by_range(*pokemon_first_gen)
-    app= QApplication(sys.argv)
-    mw=MainWindow(listPokemon)
-    sys.exit(app.exec_())
-
-if __name__ =='__main__' :
-    main()

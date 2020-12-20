@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget,QPushButton,QGridLayout,QLineEdit,QMessageBox
 from PyQt5.QtCore import Qt
-from pokemon import find_pokemon_by_id,Pokemon,find_pokemon_by_name
+from api.pokemon import find_pokemon_by_id,Pokemon,find_pokemon_by_name
 
 """
     Classe NavLayout sert a mettre en place l'affichage des boutons de navigation

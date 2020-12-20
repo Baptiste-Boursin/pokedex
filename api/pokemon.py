@@ -2,15 +2,8 @@
 
 import requests
 
-# Création de la classe pokemon
-class Pokemon:
-    def __init__(self,name, id = None, image = None,types=None,height=None,weight=None):
-        self.name = name
-        self.id = id
-        self.image = image
-        self.type=types
-        self.height=height
-        self.weight=weight
+from models.pokemon import Pokemon
+
 
 # fonction de recherche de pokémon par intervalle
 # retourne une liste de pokémons si possible, sinon rien
@@ -39,7 +32,7 @@ def find_pokemon_by_name(name,start=0,end=151):
         return None
 
     result = r.json()
-    return Pokemon(result["name"],result["id"],result["sprites"]["front_default"],result["types"][0]["type"]["name"],result["height"],result["weight"])
+    return Pokemon(result["id"], result["name"], get_image_content(result["sprites"]["front_default"]), result["types"][0]["type"]["name"], result["height"], result["weight"])
 
 # fonction de recherche de pokémon par id
 # retourne une instance de Pokemon si trouvé, sinon rien.
@@ -50,4 +43,10 @@ def find_pokemon_by_id(id,start=0,end=151):
         return None
 
     result = r.json()
-    return Pokemon(result["name"],result["id"],result["sprites"]["front_default"],result["types"][0]["type"]["name"],result["height"],result["weight"])
+    return Pokemon(result["id"], result["name"], get_image_content(result["sprites"]["front_default"]), result["types"][0]["type"]["name"], result["height"], result["weight"])
+
+def get_image_content(image_url):
+    r = requests.get(image_url, allow_redirects=True)
+    if r.status_code != 200:
+        return None
+    return r.content
