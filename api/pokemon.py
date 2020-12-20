@@ -2,15 +2,8 @@
 
 import requests
 
-# Création de la classe pokemon
-class Pokemon:
-    def __init__(self,name, id = None, image = None,types=None,height=None,weight=None):
-        self.name = name
-        self.id = id
-        self.image = image
-        self.type=types
-        self.height=height
-        self.weight=weight
+from models.pokemon import Pokemon
+
 
 # fonction de recherche de pokémon par intervalle
 # retourne une liste de pokémons si possible, sinon rien
@@ -37,9 +30,7 @@ def find_pokemon_by_name(name,start=0,end=151):
 
     if r.status_code !=200 :
         return None
-
-    result = r.json()
-    return Pokemon(result["name"],result["id"],result["sprites"]["front_default"],result["types"][0]["type"]["name"],result["height"],result["weight"])
+    return parse_json_pkmn(r.json())
 
 # fonction de recherche de pokémon par id
 # retourne une instance de Pokemon si trouvé, sinon rien.
@@ -48,6 +39,33 @@ def find_pokemon_by_id(id,start=0,end=151):
 
     if r.status_code !=200 :
         return None
+    return parse_json_pkmn(r.json())
 
-    result = r.json()
-    return Pokemon(result["name"],result["id"],result["sprites"]["front_default"],result["types"][0]["type"]["name"],result["height"],result["weight"])
+def get_image_content(image_url):
+    r = requests.get(image_url, allow_redirects=True)
+    if r.status_code != 200:
+        return None
+    return r.content
+
+def parse_json_pkmn(json):
+    kwargs = {
+        'id': None,
+        'name': None,
+        'image': None,
+        'types': None,
+        'height': None,
+        'weight': None
+    }
+
+    # update kwargs without adding unwanted keys
+    kwargs.update((k, json[k]) for k in kwargs.keys() & json.keys())
+
+    # update image to get content and not url
+    kwargs.update({'image': get_image_content(json["sprites"]["front_default"])})
+
+    # update types to get list of types name
+    types = [pkmnType.get('type', {}).get('name', "") for pkmnType in kwargs.get('types', [])]
+    
+    kwargs.update({'types': types})
+
+    return Pokemon(**kwargs)

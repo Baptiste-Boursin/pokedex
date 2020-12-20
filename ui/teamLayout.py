@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QWidget,QPushButton,QGridLayout,QLineEdit, QLabel
 from PyQt5.QtCore import Qt
-from pokemon import find_pokemon_by_id,Pokemon
+
+from api.pokemon import find_pokemon_by_id
+from models.pokemon import Pokemon
 
 """
     Classe TeamLayout sert à afficher l'équipe pokemons
