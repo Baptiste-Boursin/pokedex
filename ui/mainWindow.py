@@ -1,12 +1,12 @@
 import requests
-import sys
-from PyQt5.QtWidgets import QWidget,QPushButton,QGridLayout,QApplication,QLabel,QStatusBar,QAction,qApp,QMainWindow,QLineEdit,QComboBox
+
+from PyQt5.QtWidgets import QWidget, QPushButton, QGridLayout, QLabel, QStatusBar, QAction, qApp, QMainWindow, QLineEdit,QComboBox
 from PyQt5.QtGui import QIcon,QPixmap
-from pokemonDisplay import AffichagePokemon
-from navLayout import NavLayout
-from teamLayout import TeamLayout
-from pokemon import *
-from teamLayout import *
+
+from ui.pokemonDisplay import PokemonDisplay
+from ui.navLayout import NavLayout
+from ui.teamLayout import TeamLayout
+from api.pokemon import find_pokemon_by_id
 
 
 """
@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.liste = liste
         self.current_pokemon= find_pokemon_by_id(self.liste[0].get('id'))
-        self.displayPokemon = AffichagePokemon(self.current_pokemon)
+        self.displayPokemon = PokemonDisplay(self.current_pokemon)
         self.width = 800
         self.height = 800
         
@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
     def navigation(self, index):
         if index < len(self.liste) and index >= 0:
             self.current_pokemon = find_pokemon_by_id(self.liste[index].get('id'))
-            self.displayPokemon.update_UI(self.current_pokemon)
+            self.displayPokemon.updateUI(self.current_pokemon)
             
     #fonction appelée par TeamLayout pour récupérer le nom du pokémon courrant
     def callback_get_current_pokemon_name(self):
@@ -70,16 +70,3 @@ class MainWindow(QMainWindow):
         self.setGeometry(300,300,800,500)
         self.setWindowTitle('Pokedex')
         self.show()
-
-"""
-    Fonction main
-"""
-def main():
-    pokemon_first_gen = [0, 151]
-    listPokemon = find_pokemon_by_range(*pokemon_first_gen)
-    app= QApplication(sys.argv)
-    mw=MainWindow(listPokemon)
-    sys.exit(app.exec_())
-
-if __name__ =='__main__' :
-    main()

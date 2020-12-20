@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QWidget,QPushButton,QGridLayout,QLineEdit,QMessageBox
+from PyQt5.QtWidgets import QWidget,QPushButton, QGridLayout,QLineEdit, QMessageBox
 from PyQt5.QtCore import Qt
-from pokemon import find_pokemon_by_id,Pokemon,find_pokemon_by_name
+
+from api.pokemon import find_pokemon_by_id, find_pokemon_by_name
 
 """
     Classe NavLayout sert a mettre en place l'affichage des boutons de navigation
@@ -80,40 +81,29 @@ class NavLayout(QWidget):
             self.callback(self.index)
 
     def search_click(self):
-        value = 0
-        pok_name = self.search.text()
-        for i in self.liste:
-            #identifie si on recherche par nom ou par id par apport à notre liste 
-            if str(pok_name).lower()==i['name'].lower() :
-                value=1
-            elif str((pok_name))== str(i['id']):
-                value=2
+        pkmn_search_value = self.search.text()
+        
+        pokemon = None
         # recherche par name 
-        if value==1 :
-            self.index=find_pokemon_by_name(pok_name).id-1
-            self.callback(self.index)
-            if self.index == 0:
-                self.btnLeft.setEnabled(False)
-            else :
-                self.btnLeft.setEnabled(True)
-        
-            if self.index == len(self.liste)-1:
-                self.btnRight.setEnabled(False)
-            else :
-                self.btnRight.setEnabled(True)
-        #recherche par id         
-        elif value==2 :
-            self.index=find_pokemon_by_id(pok_name).id-1
-            self.callback(self.index)
-            if self.index == 0:
-                self.btnLeft.setEnabled(False)
-            else :
-                self.btnLeft.setEnabled(True)
-        
-            if self.index == len(self.liste)-1:
-                self.btnRight.setEnabled(False)
-            else :
-                self.btnRight.setEnabled(True)
-        #le pokemon n'est pas dans notre liste
+        if pkmn_search_value.isalpha() :
+            pokemon = find_pokemon_by_name(pkmn_search_value)
+        # recherche par id
+        elif pkmn_search_value.isnumeric() :
+            pokemon = find_pokemon_by_id(pkmn_search_value)
+
+        if not pokemon:
+            QMessageBox.about(self, "Attention !", "Ce Pokémon n'existe pas")
+            return
+
+        self.index = [pkmn.get('id') for pkmn in self.liste].index(pokemon.id)
+
+        self.callback(self.index)
+        if self.index == 0:
+            self.btnLeft.setEnabled(False)
         else :
-            QMessageBox.about(self, "Attention !", "Ce Pokémon n'existe pas")        
+            self.btnLeft.setEnabled(True)
+    
+        if self.index == len(self.liste)-1:
+            self.btnRight.setEnabled(False)
+        else :
+            self.btnRight.setEnabled(True)
